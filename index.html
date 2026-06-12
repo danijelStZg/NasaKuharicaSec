@@ -2133,15 +2133,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const zasticen = u.superadmin === true;
         const naslov = u.ime ? u.ime : (u.email || u.uid);
         const podnaslov = u.ime ? (u.email || '') : '';
+        const onemogucen = u.disabled === true;
         let akcije = '';
         if (!zasticen) {
           akcije += `<span class="u-btn" onclick="toggleAdmin('${u.uid}', ${u.admin ? 'false' : 'true'})">${u.admin ? '⬇️ skini admina' : '⬆️ daj admina'}</span>`;
+          akcije += `<span class="u-btn" onclick="toggleDisabled('${u.uid}', ${onemogucen ? 'false' : 'true'})">${onemogucen ? '✅ omogući' : '⛔ onemogući'}</span>`;
           akcije += `<span class="u-btn" onclick="ukloniKorisnika('${u.uid}','${escapeHtml(u.email || '')}')">🗑️ ukloni</span>`;
         }
         return `<div class="c-userrow"><div class="u-info">` +
                `<div class="u-mail">${escapeHtml(naslov)}</div>` +
                (podnaslov ? `<div class="u-sub">${escapeHtml(podnaslov)}</div>` : '') +
-               `<div class="u-role">${ikonaUloge} ${uloga}</div>` +
+               `<div class="u-role">${ikonaUloge} ${uloga}${onemogucen ? ' · ⛔ onemogućen' : ''}</div>` +
                `</div><div class="u-actions">${akcije}</div></div>`;
       }).join('');
     } catch (e) {
@@ -2203,6 +2205,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       data.admin = (naAdmin === true || naAdmin === 'true');
       await setDoc(doc(db, 'korisnici', uid), data);
       showToast(data.admin ? 'Korisnik je sad admin' : 'Korisniku oduzet admin');
+      await prikaziPopisKorisnika();
+    } catch (e) { console.warn(e); showToast('Promjena nije uspjela'); }
+  }
+
+  async function toggleDisabled(uid, naOnemogucen) {
+    try {
+      const { db, doc, getDoc, setDoc } = window.fb;
+      const snap = await getDoc(doc(db, 'korisnici', uid));
+      if (!snap.exists()) return;
+      const data = snap.data();
+      if (data.superadmin === true) { showToast('Glavnog admina nije moguće onemogućiti'); return; }
+      data.disabled = (naOnemogucen === true || naOnemogucen === 'true');
+      await setDoc(doc(db, 'korisnici', uid), data);
+      showToast(data.disabled ? 'Korisnik onemogućen' : 'Korisnik ponovno omogućen');
       await prikaziPopisKorisnika();
     } catch (e) { console.warn(e); showToast('Promjena nije uspjela'); }
   }
@@ -2380,10 +2396,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 
   // Praćenje stanja prijave
+  let profilListener = null;
+
   function startAuth() {
     const { auth, onAuthStateChanged, db, doc, getDoc } = window.fb;
     onAuthStateChanged(auth, async (user) => {
       trenutniKorisnik = user;
+      // očisti prethodni real-time listener profila
+      if (profilListener) { try { profilListener(); } catch(e){} profilListener = null; }
+
       if (!user) {
         mojProfil = null;
         document.getElementById('adminMenuItem').style.display = 'none';
@@ -2391,17 +2412,48 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         return;
       }
       // Učitaj profil iz 'korisnici'
+      let snap = null;
       try {
-        const snap = await getDoc(doc(db, 'korisnici', user.uid));
-        mojProfil = snap.exists() ? snap.data() : null;
-      } catch (e) { mojProfil = null; }
+        snap = await getDoc(doc(db, 'korisnici', user.uid));
+      } catch (e) { snap = null; }
+
+      // ZAŠTITA: bez profila ili onemogućen → odjava, ne ulazi
+      if (!snap || !snap.exists()) {
+        mojProfil = null;
+        await odjaviSPorukom('Vaš pristup je uklonjen. Obratite se administratoru.');
+        return;
+      }
+      mojProfil = snap.data();
+      if (mojProfil.disabled === true) {
+        await odjaviSPorukom('Vaš pristup je privremeno onemogućen.');
+        return;
+      }
+
       // Admin meni
-      const jeAdmin = mojProfil && mojProfil.admin === true;
+      const jeAdmin = mojProfil.admin === true;
       document.getElementById('adminMenuItem').style.display = jeAdmin ? '' : 'none';
       const de = document.getElementById('drawerUserEmail');
       if (de) de.textContent = user.email || '';
       hideLogin();
-      // Prva sinkronizacija nakon prijave (sad pravila dopuštaju čitanje)
+
+      // Real-time nadzor: ako admin obriše/onemogući profil dok je korisnik
+      // prijavljen, odjavi ga unutar sekunde.
+      try {
+        const { onSnapshot } = window.fb;
+        if (onSnapshot) {
+          profilListener = onSnapshot(doc(db, 'korisnici', user.uid), (d) => {
+            if (!d.exists()) { odjaviSPorukom('Vaš pristup je uklonjen.'); return; }
+            const p = d.data();
+            if (p.disabled === true) { odjaviSPorukom('Vaš pristup je onemogućen.'); return; }
+            mojProfil = p;
+            const adminSad = p.admin === true;
+            const am = document.getElementById('adminMenuItem');
+            if (am) am.style.display = adminSad ? '' : 'none';
+          });
+        }
+      } catch (e) { console.warn('Listener profila:', e); }
+
+      // Prva sinkronizacija nakon prijave
       if (!prvaSinkroDone) {
         prvaSinkroDone = true;
         setTimeout(async () => {
@@ -2411,6 +2463,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }
     });
   }
+
+  async function odjaviSPorukom(poruka) {
+    try { await window.fb.signOut(window.fb.auth); } catch (e) {}
+    const err = document.getElementById('loginError');
+    if (err) { err.style.color = '#FFE0E0'; err.textContent = poruka; }
+    showLogin();
+  }
+
   if (window.fb && window.fb.auth) startAuth();
   else window.addEventListener('fb-ready', startAuth, { once: true });
 
@@ -2458,7 +2518,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script type="module">
   // Firebase v11 (modularni SDK preko CDN-a)
   import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getFirestore, collection, doc, getDoc, setDoc, getDocs, deleteDoc }
+  import { getFirestore, collection, doc, getDoc, setDoc, getDocs, deleteDoc, onSnapshot }
     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
   import {
     getAuth, onAuthStateChanged,
@@ -2498,7 +2558,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // Izlažemo Firestore + Auth globalno da ih app može koristiti
   window.fb = {
-    db, collection, doc, getDoc, setDoc, getDocs, deleteDoc,
+    db, collection, doc, getDoc, setDoc, getDocs, deleteDoc, onSnapshot,
     auth, onAuthStateChanged,
     signInWithEmailAndPassword, signOut,
     setPersistence, browserLocalPersistence, browserSessionPersistence,
