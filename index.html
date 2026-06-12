@@ -937,8 +937,13 @@
     font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#fff;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
+  #confirmScreen .c-userrow .u-sub {
+    font-family:'Inter',sans-serif; font-size:11px; color:rgba(255,255,255,0.62);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
   #confirmScreen .c-userrow .u-role {
     font-family:'Inter',sans-serif; font-size:11px; color:rgba(255,255,255,0.8);
+    margin-top:2px;
   }
   #confirmScreen .c-userrow .u-actions { display:flex; gap:6px; flex-shrink:0; }
   #confirmScreen .c-userrow .u-btn {
@@ -2121,16 +2126,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const snap = await getDocs(collection(db, 'korisnici'));
       const lista = [];
       snap.forEach(d => lista.push({ uid: d.id, ...d.data() }));
-      lista.sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+      lista.sort((a, b) => ((a.ime || a.email || '')).localeCompare(b.ime || b.email || ''));
       redovi = lista.map(u => {
+        const ikonaUloge = u.superadmin ? '⭐' : (u.admin ? '🛡️' : '👤');
         const uloga = u.superadmin ? 'glavni admin' : (u.admin ? 'admin' : 'korisnik');
         const zasticen = u.superadmin === true;
+        const naslov = u.ime ? u.ime : (u.email || u.uid);
+        const podnaslov = u.ime ? (u.email || '') : '';
         let akcije = '';
         if (!zasticen) {
-          akcije += `<span class="u-btn" onclick="toggleAdmin('${u.uid}', ${u.admin ? 'false' : 'true'})">${u.admin ? 'skini admina' : 'daj admina'}</span>`;
-          akcije += `<span class="u-btn" onclick="ukloniKorisnika('${u.uid}','${escapeHtml(u.email || '')}')">ukloni</span>`;
+          akcije += `<span class="u-btn" onclick="toggleAdmin('${u.uid}', ${u.admin ? 'false' : 'true'})">${u.admin ? '⬇️ skini admina' : '⬆️ daj admina'}</span>`;
+          akcije += `<span class="u-btn" onclick="ukloniKorisnika('${u.uid}','${escapeHtml(u.email || '')}')">🗑️ ukloni</span>`;
         }
-        return `<div class="c-userrow"><div class="u-info"><div class="u-mail">${escapeHtml(u.email || u.uid)}</div><div class="u-role">${uloga}</div></div><div class="u-actions">${akcije}</div></div>`;
+        return `<div class="c-userrow"><div class="u-info">` +
+               `<div class="u-mail">${escapeHtml(naslov)}</div>` +
+               (podnaslov ? `<div class="u-sub">${escapeHtml(podnaslov)}</div>` : '') +
+               `<div class="u-role">${ikonaUloge} ${uloga}</div>` +
+               `</div><div class="u-actions">${akcije}</div></div>`;
       }).join('');
     } catch (e) {
       console.warn(e); redovi = '<div style="color:#FFE0E0">Greška pri učitavanju korisnika.</div>';
