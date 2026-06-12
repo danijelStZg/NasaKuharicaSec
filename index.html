@@ -850,9 +850,122 @@
     border:1px solid rgba(255,255,255,0.3);
     padding:4px 9px; border-radius:20px;
   }
+
+  /* ===== EKRAN ZA PRIJAVU ===== */
+  #loginScreen {
+    position:fixed; inset:0; z-index:10000;
+    background:linear-gradient(160deg,#E30613 0%,#B30410 100%);
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    overflow-y:auto; text-align:center; padding:30px 24px;
+  }
+  #loginScreen.show { display:flex; }
+  #loginScreen::before, #loginScreen::after {
+    content:""; position:absolute; border-radius:50%; background:rgba(255,255,255,0.07);
+  }
+  #loginScreen::before { width:300px; height:300px; top:-90px; right:-90px; }
+  #loginScreen::after { width:220px; height:220px; bottom:-60px; left:-60px; }
+  #loginScreen .l-logo {
+    width:96px; height:96px; border-radius:26px;
+    background:rgba(255,255,255,0.14); border:1.5px solid rgba(255,255,255,0.3);
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px;
+    position:relative; z-index:1;
+  }
+  #loginScreen .l-logo .icon { font-size:48px; line-height:1; }
+  #loginScreen .l-title {
+    font-family:'Cormorant Garamond',serif; font-weight:700; font-size:38px; color:#fff;
+    position:relative; z-index:1;
+  }
+  #loginScreen .l-sub {
+    font-family:'Caveat',cursive; font-size:22px; color:rgba(255,255,255,0.9);
+    margin-bottom:26px; position:relative; z-index:1;
+  }
+  #loginScreen .l-form {
+    width:100%; max-width:330px; position:relative; z-index:1;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  #loginScreen input {
+    width:100%; padding:14px 16px; border-radius:12px;
+    border:1.5px solid rgba(255,255,255,0.35);
+    background:rgba(255,255,255,0.14); color:#fff;
+    font-family:'Inter',sans-serif; font-size:15px;
+  }
+  #loginScreen input::placeholder { color:rgba(255,255,255,0.7); }
+  #loginScreen input:focus { outline:none; border-color:#fff; background:rgba(255,255,255,0.2); }
+  #loginScreen .l-remember {
+    display:flex; align-items:center; gap:9px; justify-content:flex-start;
+    color:rgba(255,255,255,0.92); font-family:'Inter',sans-serif; font-size:14px;
+    margin:2px 0; cursor:pointer;
+  }
+  #loginScreen .l-remember input { width:auto; accent-color:#fff; }
+  #loginScreen .l-btn {
+    width:100%; padding:14px; border:none; border-radius:12px;
+    background:#fff; color:#E30613; font-family:'Inter',sans-serif;
+    font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    cursor:pointer; margin-top:4px;
+  }
+  #loginScreen .l-btn:active { background:rgba(255,255,255,0.85); }
+  #loginScreen .l-btn:disabled { opacity:0.6; }
+  #loginScreen .l-error {
+    color:#FFE0E0; font-family:'Inter',sans-serif; font-size:13.5px;
+    min-height:18px; line-height:1.4;
+  }
+  #loginScreen .l-link {
+    color:rgba(255,255,255,0.9); font-family:'Inter',sans-serif; font-size:13px;
+    text-decoration:underline; cursor:pointer; margin-top:2px;
+  }
+
+  /* ===== Forma unutar confirm-popupa (admin/lozinka) ===== */
+  #confirmScreen .c-form {
+    position:relative; z-index:1; width:100%; max-width:320px;
+    margin-top:16px; display:flex; flex-direction:column; gap:10px; text-align:left;
+  }
+  #confirmScreen .c-form input, #confirmScreen .c-form select {
+    width:100%; padding:12px 14px; border-radius:11px;
+    border:1.5px solid rgba(255,255,255,0.35);
+    background:rgba(255,255,255,0.14); color:#fff;
+    font-family:'Inter',sans-serif; font-size:15px;
+  }
+  #confirmScreen .c-form input::placeholder { color:rgba(255,255,255,0.7); }
+  #confirmScreen .c-form input:focus { outline:none; border-color:#fff; }
+  #confirmScreen .c-userrow {
+    background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
+    border-radius:12px; padding:11px 14px; display:flex; align-items:center;
+    justify-content:space-between; gap:10px;
+  }
+  #confirmScreen .c-userrow .u-info { text-align:left; min-width:0; }
+  #confirmScreen .c-userrow .u-mail {
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#fff;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  #confirmScreen .c-userrow .u-role {
+    font-family:'Inter',sans-serif; font-size:11px; color:rgba(255,255,255,0.8);
+  }
+  #confirmScreen .c-userrow .u-actions { display:flex; gap:6px; flex-shrink:0; }
+  #confirmScreen .c-userrow .u-btn {
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
+    padding:6px 10px; border-radius:16px; cursor:pointer;
+    background:rgba(255,255,255,0.16); color:#fff; border:1px solid rgba(255,255,255,0.3);
+  }
 </style>
 </head>
 <body>
+
+<div id="loginScreen">
+  <div class="l-logo"><span class="icon">🍴</span></div>
+  <div class="l-title">Naša Kuharica</div>
+  <div class="l-sub">prijava</div>
+  <div class="l-form">
+    <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="username" inputmode="email">
+    <input type="password" id="loginPass" placeholder="Lozinka" autocomplete="current-password">
+    <label class="l-remember">
+      <input type="checkbox" id="loginRemember" checked>
+      Zapamti me na ovom uređaju
+    </label>
+    <div class="l-error" id="loginError"></div>
+    <button class="l-btn" id="loginBtn" onclick="doLogin()">Prijavi se</button>
+    <span class="l-link" onclick="forgotPassword()">Zaboravljena lozinka?</span>
+  </div>
+</div>
 
 <div id="splash" onclick="hideSplash()">
   <div class="logo-wrap"><span class="icon">🍴</span></div>
@@ -926,6 +1039,15 @@
     </div>
     <div class="drawer-item" onclick="openAbout()">
       <span class="icon">ℹ️</span> O aplikaciji
+    </div>
+    <div class="drawer-item" id="adminMenuItem" style="display:none" onclick="openAdminUsers()">
+      <span class="icon">👤</span> Administracija korisnika
+    </div>
+    <div class="drawer-item" onclick="changeMyPassword()">
+      <span class="icon">🔑</span> Promijeni lozinku
+    </div>
+    <div class="drawer-item" onclick="doLogout()">
+      <span class="icon">🚪</span> Odjava <span id="drawerUserEmail" style="margin-left:auto;font-size:11px;color:var(--text-tertiary);"></span>
     </div>
   </div>
 </div>
@@ -1929,6 +2051,142 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     });
   }
 
+  // Popup s poljima za unos; vraća objekt {id:value} ili null ako odustane
+  function splashPrompt({ icon = '✏️', title = '', desc = '', fields = [], yes = 'Spremi', no = 'Odustani' }) {
+    return new Promise((resolve) => {
+      const screen = document.getElementById('confirmScreen');
+      document.getElementById('confirmIcon').textContent = icon;
+      document.getElementById('confirmTitle').textContent = title;
+      const inputs = fields.map(f =>
+        `<input id="prompt_${f.id}" type="${f.type || 'text'}" placeholder="${escapeHtml(f.placeholder || '')}" ${f.value ? `value="${escapeHtml(f.value)}"` : ''} autocomplete="off">`
+      ).join('');
+      document.getElementById('confirmText').innerHTML =
+        (desc ? `<div style="margin-bottom:4px">${desc}</div>` : '') +
+        `<div class="c-form">${inputs}</div>`;
+      const btnYes = document.getElementById('confirmYes');
+      const btnNo = document.getElementById('confirmNo');
+      btnYes.textContent = yes; btnNo.textContent = no; btnNo.style.display = '';
+      screen.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      function zatvori(rezultat) {
+        screen.classList.remove('show');
+        document.body.style.overflow = '';
+        btnYes.onclick = null; btnNo.onclick = null;
+        resolve(rezultat);
+      }
+      btnYes.onclick = () => {
+        const out = {};
+        fields.forEach(f => { out[f.id] = document.getElementById('prompt_' + f.id).value; });
+        zatvori(out);
+      };
+      btnNo.onclick = () => zatvori(null);
+    });
+  }
+
+  // ===== ADMINISTRACIJA KORISNIKA (samo admin) =====
+  async function openAdminUsers() {
+    closeDrawer();
+    if (!mojProfil || mojProfil.admin !== true) { showToast('Samo administratori'); return; }
+    await prikaziPopisKorisnika();
+  }
+
+  async function prikaziPopisKorisnika() {
+    const { db, collection, getDocs } = window.fb;
+    let redovi = '';
+    try {
+      const snap = await getDocs(collection(db, 'korisnici'));
+      const lista = [];
+      snap.forEach(d => lista.push({ uid: d.id, ...d.data() }));
+      lista.sort((a, b) => (a.email || '').localeCompare(b.email || ''));
+      redovi = lista.map(u => {
+        const uloga = u.superadmin ? 'glavni admin' : (u.admin ? 'admin' : 'korisnik');
+        const zasticen = u.superadmin === true;
+        let akcije = '';
+        if (!zasticen) {
+          akcije += `<span class="u-btn" onclick="toggleAdmin('${u.uid}', ${u.admin ? 'false' : 'true'})">${u.admin ? 'skini admina' : 'daj admina'}</span>`;
+          akcije += `<span class="u-btn" onclick="ukloniKorisnika('${u.uid}','${escapeHtml(u.email || '')}')">ukloni</span>`;
+        }
+        return `<div class="c-userrow"><div class="u-info"><div class="u-mail">${escapeHtml(u.email || u.uid)}</div><div class="u-role">${uloga}</div></div><div class="u-actions">${akcije}</div></div>`;
+      }).join('');
+    } catch (e) {
+      console.warn(e); redovi = '<div style="color:#FFE0E0">Greška pri učitavanju korisnika.</div>';
+    }
+    const html = `<div class="c-list">${redovi || 'Nema korisnika.'}</div>`;
+    // Prikaz s dva gumba: "Dodaj korisnika" (yes) i "Zatvori" (no)
+    const dodaj = await splashConfirm({
+      icon: '👤', title: 'Korisnici',
+      text: html,
+      yes: '➕ Dodaj korisnika', no: 'Zatvori'
+    });
+    if (dodaj) await dodajKorisnika();
+  }
+
+  async function dodajKorisnika() {
+    const podaci = await splashPrompt({
+      icon: '➕', title: 'Novi korisnik',
+      fields: [
+        { id: 'email', type: 'email', placeholder: 'E-mail' },
+        { id: 'ime', type: 'text', placeholder: 'Ime (nije obavezno)' },
+        { id: 'lozinka', type: 'password', placeholder: 'Početna lozinka (min 6 znakova)' }
+      ],
+      yes: 'Kreiraj', no: 'Odustani'
+    });
+    if (!podaci) return;
+    const email = (podaci.email || '').trim();
+    const lozinka = podaci.lozinka || '';
+    if (!email || lozinka.length < 6) { showToast('E-mail i lozinka (min 6 znakova) su obavezni'); return; }
+    showToast('Kreiram korisnika...');
+    try {
+      const { createUserKeepingAdmin, db, doc, setDoc } = window.fb;
+      const uid = await createUserKeepingAdmin(email, lozinka);
+      await setDoc(doc(db, 'korisnici', uid), {
+        email: email,
+        ime: (podaci.ime || '').trim(),
+        admin: false,
+        superadmin: false,
+        created: Date.now()
+      });
+      showToast('Korisnik kreiran: ' + email);
+    } catch (e) {
+      console.warn('Kreiranje korisnika nije uspjelo:', e);
+      const c = (e.code || '');
+      if (c.includes('email-already-in-use')) showToast('Taj e-mail već postoji');
+      else if (c.includes('invalid-email')) showToast('Neispravan e-mail');
+      else if (c.includes('weak-password')) showToast('Lozinka je preslaba');
+      else showToast('Kreiranje nije uspjelo');
+    }
+  }
+
+  async function toggleAdmin(uid, naAdmin) {
+    try {
+      const { db, doc, getDoc, setDoc } = window.fb;
+      const snap = await getDoc(doc(db, 'korisnici', uid));
+      if (!snap.exists()) return;
+      const data = snap.data();
+      if (data.superadmin === true) { showToast('Glavnog admina nije moguće mijenjati'); return; }
+      data.admin = (naAdmin === true || naAdmin === 'true');
+      await setDoc(doc(db, 'korisnici', uid), data);
+      showToast(data.admin ? 'Korisnik je sad admin' : 'Korisniku oduzet admin');
+      await prikaziPopisKorisnika();
+    } catch (e) { console.warn(e); showToast('Promjena nije uspjela'); }
+  }
+
+  async function ukloniKorisnika(uid, email) {
+    const ok = await splashConfirm({
+      icon: '🗑️', title: 'Ukloni korisnika',
+      text: `Ukloniti korisnika <strong>${escapeHtml(email)}</strong> s popisa?<br><br>` +
+            `Napomena: ovime se uklanja s popisa i gubi pristup pisanju, ali sam prijavni račun ostaje u Firebaseu (briše se zasebno u konzoli).`,
+      yes: 'Ukloni', no: 'Odustani'
+    });
+    if (!ok) return;
+    try {
+      const { db, doc, deleteDoc } = window.fb;
+      await deleteDoc(doc(db, 'korisnici', uid));
+      showToast('Korisnik uklonjen s popisa');
+      await prikaziPopisKorisnika();
+    } catch (e) { console.warn(e); showToast('Uklanjanje nije uspjelo'); }
+  }
+
   // Splash ostaje dok korisnik ne dodirne ekran
   function hideSplash() {
     const s = document.getElementById('splash');
@@ -1987,12 +2245,138 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Zaključaj skrolanje dok je splash prikazan
   if (document.getElementById('splash')) document.body.style.overflow = 'hidden';
 
-  // Pri pokretanju (kad ima interneta): prvo tiho povuci nove/izmijenjene
-  // iz oblaka (uz kratku poruku ako ima novosti), zatim tiho pošalji svoje.
-  setTimeout(async () => {
-    await checkCloud(true);   // tiho povlačenje + toast samo ako ima novog
-    await tihaSinkronizacija(); // tiho slanje novih/izmijenjenih
-  }, 3000);
+  // ===== AUTENTIFIKACIJA =====
+  let trenutniKorisnik = null;   // Firebase user
+  let mojProfil = null;          // zapis iz kolekcije 'korisnici'
+  let prvaSinkroDone = false;
+
+  function showLogin() {
+    const ls = document.getElementById('loginScreen');
+    if (ls) ls.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function hideLogin() {
+    const ls = document.getElementById('loginScreen');
+    if (ls) ls.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  async function doLogin() {
+    const email = (document.getElementById('loginEmail').value || '').trim();
+    const pass = document.getElementById('loginPass').value || '';
+    const remember = document.getElementById('loginRemember').checked;
+    const err = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    err.textContent = '';
+    if (!email || !pass) { err.textContent = 'Unesite e-mail i lozinku.'; return; }
+    if (!window.fb || !window.fb.auth) { err.textContent = 'Pričekajte trenutak, aplikacija se još učitava...'; return; }
+    btn.disabled = true; btn.textContent = 'Prijava...';
+    try {
+      const { auth, setPersistence, browserLocalPersistence, browserSessionPersistence, signInWithEmailAndPassword } = window.fb;
+      // "Zapamti me": lokalno = ostaje prijavljen; bez = samo do zatvaranja
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+      await signInWithEmailAndPassword(auth, email, pass);
+      // onAuthStateChanged preuzima dalje
+    } catch (e) {
+      console.warn('Prijava nije uspjela:', e);
+      err.textContent = prijavaGreska(e);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Prijavi se';
+    }
+  }
+
+  function prijavaGreska(e) {
+    const c = (e && e.code) || '';
+    if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found'))
+      return 'Pogrešan e-mail ili lozinka.';
+    if (c.includes('invalid-email')) return 'Neispravan e-mail.';
+    if (c.includes('too-many-requests')) return 'Previše pokušaja. Pokušajte kasnije.';
+    if (c.includes('network')) return 'Nema internetske veze.';
+    return 'Prijava nije uspjela. Pokušajte ponovno.';
+  }
+
+  async function doLogout() {
+    closeDrawer();
+    const ok = await splashConfirm({
+      icon: '🚪', title: 'Odjava',
+      text: 'Želite li se odjaviti iz aplikacije?',
+      yes: 'Odjavi se', no: 'Odustani'
+    });
+    if (!ok) return;
+    try { await window.fb.signOut(window.fb.auth); } catch (e) {}
+  }
+
+  async function forgotPassword() {
+    const email = (document.getElementById('loginEmail').value || '').trim();
+    const err = document.getElementById('loginError');
+    if (!email) { err.textContent = 'Upišite e-mail pa kliknite "Zaboravljena lozinka".'; return; }
+    try {
+      await window.fb.sendPasswordResetEmail(window.fb.auth, email);
+      err.style.color = '#E0FFE0';
+      err.textContent = 'Poslan je e-mail za promjenu lozinke (provjerite i neželjenu poštu).';
+    } catch (e) {
+      err.style.color = '#FFE0E0';
+      err.textContent = prijavaGreska(e);
+    }
+  }
+
+  async function changeMyPassword() {
+    closeDrawer();
+    if (!trenutniKorisnik) return;
+    const nova = await splashPrompt({
+      icon: '🔑', title: 'Promijeni lozinku',
+      fields: [{ id: 'p1', type: 'password', placeholder: 'Nova lozinka' },
+               { id: 'p2', type: 'password', placeholder: 'Ponovi novu lozinku' }],
+      yes: 'Spremi', no: 'Odustani'
+    });
+    if (!nova) return;
+    if (!nova.p1 || nova.p1.length < 6) { showToast('Lozinka mora imati barem 6 znakova'); return; }
+    if (nova.p1 !== nova.p2) { showToast('Lozinke se ne podudaraju'); return; }
+    try {
+      await window.fb.updatePassword(trenutniKorisnik, nova.p1);
+      showToast('Lozinka promijenjena');
+    } catch (e) {
+      console.warn(e);
+      if ((e.code || '').includes('requires-recent-login'))
+        showToast('Iz sigurnosti se ponovno prijavite pa probajte opet');
+      else showToast('Promjena lozinke nije uspjela');
+    }
+  }
+
+  // Praćenje stanja prijave
+  function startAuth() {
+    const { auth, onAuthStateChanged, db, doc, getDoc } = window.fb;
+    onAuthStateChanged(auth, async (user) => {
+      trenutniKorisnik = user;
+      if (!user) {
+        mojProfil = null;
+        document.getElementById('adminMenuItem').style.display = 'none';
+        showLogin();
+        return;
+      }
+      // Učitaj profil iz 'korisnici'
+      try {
+        const snap = await getDoc(doc(db, 'korisnici', user.uid));
+        mojProfil = snap.exists() ? snap.data() : null;
+      } catch (e) { mojProfil = null; }
+      // Admin meni
+      const jeAdmin = mojProfil && mojProfil.admin === true;
+      document.getElementById('adminMenuItem').style.display = jeAdmin ? '' : 'none';
+      const de = document.getElementById('drawerUserEmail');
+      if (de) de.textContent = user.email || '';
+      hideLogin();
+      // Prva sinkronizacija nakon prijave (sad pravila dopuštaju čitanje)
+      if (!prvaSinkroDone) {
+        prvaSinkroDone = true;
+        setTimeout(async () => {
+          await checkCloud(true);
+          await tihaSinkronizacija();
+        }, 800);
+      }
+    });
+  }
+  if (window.fb && window.fb.auth) startAuth();
+  else window.addEventListener('fb-ready', startAuth, { once: true });
 
   loadRecipes();
   renderList();
@@ -2037,9 +2421,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 <script type="module">
   // Firebase v11 (modularni SDK preko CDN-a)
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc }
+  import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+  import { getFirestore, collection, doc, getDoc, setDoc, getDocs, deleteDoc }
     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+  import {
+    getAuth, onAuthStateChanged,
+    signInWithEmailAndPassword, signOut,
+    setPersistence, browserLocalPersistence, browserSessionPersistence,
+    createUserWithEmailAndPassword, updatePassword,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA0ClXWmPFNL_xIfRdjsWnS0glj-AuvWbA",
@@ -2052,9 +2443,35 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
-  // Izlažemo Firestore funkcije globalno da ih app (onclick) može koristiti
-  window.fb = { db, collection, doc, setDoc, getDocs, deleteDoc };
+  // Kreiranje novog korisnika preko sekundarne instance,
+  // da admin ostane prijavljen na glavnoj instanci.
+  async function createUserKeepingAdmin(email, password) {
+    const secApp = initializeApp(firebaseConfig, 'secondary-' + Date.now());
+    const secAuth = getAuth(secApp);
+    try {
+      const cred = await createUserWithEmailAndPassword(secAuth, email, password);
+      const uid = cred.user.uid;
+      await signOut(secAuth);
+      return uid;
+    } finally {
+      try { await deleteApp(secApp); } catch (e) {}
+    }
+  }
+
+  // Izlažemo Firestore + Auth globalno da ih app može koristiti
+  window.fb = {
+    db, collection, doc, getDoc, setDoc, getDocs, deleteDoc,
+    auth, onAuthStateChanged,
+    signInWithEmailAndPassword, signOut,
+    setPersistence, browserLocalPersistence, browserSessionPersistence,
+    updatePassword, sendPasswordResetEmail,
+    createUserKeepingAdmin
+  };
+
+  // Javi aplikaciji da je Firebase spreman
+  window.dispatchEvent(new Event('fb-ready'));
 </script>
 
 </body>
