@@ -1,7 +1,7 @@
 // ===== Naša Kuharica - Service Worker =====
 // VAŽNO: pri svakoj novoj verziji app PROMIJENITE broj ispod (npr. v2 -> v3).
 // To je ono što natjera preglednik da odbaci stari cache i povuče novu verziju.
-const CACHE_VERSION = 'nasa-kuharica-v10';
+const CACHE_VERSION = 'nasa-kuharica-v11';
 
 // Datoteke koje želimo imati dostupne i bez interneta (offline)
 const PRECACHE_URLS = [
