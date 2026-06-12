@@ -1134,7 +1134,7 @@
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:6px;color:var(--text-primary);">Instaliraj na drugi uređaj</h2>
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.5;">Skenirajte QR kod kamerom telefona, otvorite link i dodajte aplikaciju na početni zaslon.</p>
     <div id="qrCanvas" style="display:flex;justify-content:center;padding:14px;background:#fff;border-radius:14px;border:1px solid var(--border);"></div>
-    <p style="font-size:11px;color:var(--text-tertiary);margin-top:14px;word-break:break-all;">https://danijelstzg.github.io/NasaKuharica/</p>
+    <p style="font-size:11px;color:var(--text-tertiary);margin-top:14px;word-break:break-all;">https://danijelstzg.github.io/NasaKuharicaSec/</p>
     <button onclick="closeModal('qrModal')" style="margin-top:18px;width:100%;padding:12px;border:none;border-radius:10px;background:var(--red);color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Zatvori</button>
   </div>
 </div>
@@ -1980,7 +1980,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Prikaže QR kod URL-a aplikacije za instalaciju na drugi uređaj
   function showInstallQR() {
     closeDrawer();
-    const url = 'https://danijelstzg.github.io/NasaKuharica/';
+    const url = 'https://danijelstzg.github.io/NasaKuharicaSec/';
     const target = document.getElementById('qrCanvas');
     try {
       if (typeof qrcode === 'undefined') { showToast('QR generator nije učitan'); return; }
